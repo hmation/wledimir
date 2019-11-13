@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #define led1 0
 #define led2 2
 #define DELAY 10

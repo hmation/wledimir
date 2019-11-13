@@ -1,4 +1,5 @@
 #include <ArduinoOTA.h>
+#include <Arduino.h>
 
 void setupOTA()
 {
