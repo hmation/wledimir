@@ -20,11 +20,10 @@ void setupWebServer()
     server.begin();
 }
 
-void loopWebServer() 
+void loopWebServer()
 {
-     server.handleClient();
+    server.handleClient();
 }
-
 
 void handleRoot()
 {
@@ -68,6 +67,14 @@ void handlePost()
 
     char message[] = "OK.";
     succeedWith(message);
+}
+
+void validate(byte led)
+{
+    if (led != 1 && led != 2)
+    {
+        failWith(ERR_CODE, "You can only choose 1 or 2 for led number");
+    }
 }
 
 void succeedWith(char message[])
