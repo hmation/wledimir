@@ -2,6 +2,7 @@
 #include <ArduinoJson.h>
 #include "led.h"
 #include "controller.h"
+#include "RestPayloadValidator.h"
 
 #define PORT 8080
 #define ERR_CODE 400
@@ -9,8 +10,13 @@
 #define PLAIN "plain"
 #define APP_JSON "application/json"
 
+#define JSON_LED "led"
+#define JSON_VALUE "value"
+#define JSON_EFFECT "effect"
+
 ESP8266WebServer server(PORT);
 StaticJsonDocument<150> json;
+RestPayloadValidator payloadValidator = RestPayloadValidator();
 
 void setupWebServer()
 {
@@ -20,11 +26,10 @@ void setupWebServer()
     server.begin();
 }
 
-void loopWebServer() 
+void loopWebServer()
 {
-     server.handleClient();
+    server.handleClient();
 }
-
 
 void handleRoot()
 {
@@ -48,34 +53,33 @@ void handleNotFound()
  */
 void handlePost()
 {
-
     if (server.hasArg(PLAIN) == false)
     {
         failWith(ERR_CODE, "Body not received.");
         return;
     }
 
-    auto error = deserializeJson(json, server.arg(PLAIN));
+    RestPayloadValidationResult validationResult = payloadValidator.validate(json, deserializeJson(json, server.arg(PLAIN)));
 
-    if (error)
+    if (validationResult.faulty)
     {
-        failWith(ERR_CODE, "Cannot parse message.");
+        failWith(validationResult.httpErrorCode, validationResult.message);
         delay(1000);
         return;
     }
-
-    manipulateLed(json["led"], json["value"], json["effect"]);
-
-    char message[] = "OK.";
-    succeedWith(message);
+    else
+    {
+        manipulateLed(json[JSON_LED], json[JSON_VALUE], json[JSON_EFFECT]);
+        succeedWith(validationResult.message);
+    }
 }
 
-void succeedWith(char message[])
+void succeedWith(String message)
 {
-    server.send(SUC_CODE, APP_JSON, "{\"message\": \"" + String(message) + "\"}");
+    server.send(SUC_CODE, APP_JSON, "{\"message\": \"" + message + "\"}");
 }
 
-void failWith(int code, char message[])
+void failWith(int code, String message)
 {
-    server.send(code, APP_JSON, "{\"error\": \"" + String(message) + "\"}");
+    server.send(code, APP_JSON, "{\"error\": \"" + message + "\"}");
 }

@@ -1,4 +1,6 @@
-void manipulateLed(int led, byte value, String effect);
+#include <Arduino.h>
+
+void manipulateLed(byte led, byte value, String effect);
 
 void setupLed();
 
