@@ -74,22 +74,6 @@ void handlePost()
     }
 }
 
-boolean validate(byte led, int value)
-{
-    boolean retVal = true;
-    if (led != 1 && led != 2)
-    {
-        failWith(ERR_CODE, "The led number has to be either 1 or 2.");
-        retVal = false;
-    }
-    if (value < 0 || value > 100)
-    {
-        failWith(ERR_CODE, "The value has to be in range <0,100>.");
-        retVal = false;
-    }
-    return retVal;
-}
-
 void succeedWith(String message)
 {
     server.send(SUC_CODE, APP_JSON, "{\"message\": \"" + message + "\"}");
