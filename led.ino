@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
-#define led1 0
-#define led2 2
-#define DELAY 10
+#define LED_1_GPIO 0
+#define LED_2_GPIO 2
+#define DELAY 3
 
 volatile int led1_toBeValue = 0;
 volatile int led1_currentValue = 0;
@@ -11,11 +11,11 @@ volatile int led2_currentValue = 0;
 
 void setupLed()
 {
-    pinMode(led1, OUTPUT);
-    pinMode(led2, OUTPUT);
+    pinMode(LED_1_GPIO, OUTPUT);
+    pinMode(LED_2_GPIO, OUTPUT);
 
-    analogWrite(led1, 0);
-    analogWrite(led2, 0);
+    analogWrite(LED_1_GPIO, 0);
+    analogWrite(LED_2_GPIO, 0);
 }
 
 void loopLed()
@@ -33,7 +33,7 @@ void loopLed()
             led1_currentValue = led1_currentValue - 1;
         }
         delayMs = DELAY;
-        analogWrite(led1, led1_currentValue);
+        analogWrite(LED_1_GPIO, led1_currentValue);
     }
 
     if (led2_currentValue != led2_toBeValue)
@@ -47,7 +47,7 @@ void loopLed()
             led2_currentValue = led2_currentValue - 1;
         }
         delayMs = DELAY;
-        analogWrite(led2, led2_currentValue); // analogWrite values from 0 to 255
+        analogWrite(LED_2_GPIO, led2_currentValue);
     }
 
     delay(delayMs);
@@ -55,7 +55,7 @@ void loopLed()
 
 // value might be from 0 to 100
 // led might be eiter 1 or 2
-void manipulateLed(int led, byte value, String effect)
+void manipulateLed(byte led, byte value, String effect)
 {
     if (led == 1)
     {
